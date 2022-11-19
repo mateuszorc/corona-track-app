@@ -1,8 +1,8 @@
 package io.mo.coronatrackapp.controlers;
 
+import io.mo.coronatrackapp.models.ApiSportsStats;
 import io.mo.coronatrackapp.models.LocationStats;
 import io.mo.coronatrackapp.services.CoronaDataService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,5 +27,14 @@ public class HomeController {
         model.addAttribute("totalReportedCases", totalReportedCases);
         model.addAttribute("totalNewCases", totalNewCases);
         return "home";
+    }
+
+    @GetMapping("/secondApi")
+    public String secondApi(Model model) {
+        ApiSportsStats apiSportsStats = coronaDataService.getSecondApiData();
+        model.addAttribute("totalReportedCases", apiSportsStats.getTotalCases());
+        model.addAttribute("totalNewCases", apiSportsStats.getNewCases());
+        model.addAttribute("locationStats", apiSportsStats.getCountries());
+        return "secondApi";
     }
 }
