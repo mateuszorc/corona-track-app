@@ -1,5 +1,6 @@
 package io.mo.coronatrackapp.services;
 
+import io.mo.coronatrackapp.models.ApiSportsStats;
 import io.mo.coronatrackapp.models.LocationStats;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -65,10 +66,8 @@ public class CoronaDataService {
         }
     }
 
-    //getting overall data
     @PostConstruct
-    public void getSecondApiDataTotal() {
-
+    public ApiSportsStats getSecondApiDataDaily() {
         HttpRequest requestTotalStats = HttpRequest.newBuilder()
                 .uri(URI.create("https://covid-193.p.rapidapi.com/statistics?country=all"))
                 .header("X-RapidAPI-Key", "e748cb7a27msh958efd3def7152bp12f14bjsn8a68de5bdcc1")
@@ -76,6 +75,18 @@ public class CoronaDataService {
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://covid-193.p.rapidapi.com/statistics"))
+                .header("X-RapidAPI-Key", "e748cb7a27msh958efd3def7152bp12f14bjsn8a68de5bdcc1")
+                .header("X-RapidAPI-Host", "covid-193.p.rapidapi.com")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        //creating object of ApisportsStats class
+        ApiSportsStats ApiSportsData = new ApiSportsStats();
+
+        //getting overall data
         try {
             HttpResponse<String> responseTotalStats =
                     HttpClient.newHttpClient().send(requestTotalStats, HttpResponse.BodyHandlers.ofString());
@@ -91,48 +102,33 @@ public class CoronaDataService {
                 int startIndex = allCasesTmp.indexOf("total") + 7;
                 int endIndex = allCasesTmp.indexOf("cri") - 2;
                 String allCases = allCasesTmp.substring(startIndex, endIndex).replace("\"","");
-                System.out.println(allCases);
+                ApiSportsData.setAllTotalCases(allCases);
 
                 //getting new cases
                 String newCasesTmp = obj.getString("cases");
                 int startIndex2 = newCasesTmp.indexOf("new") + 5;
                 int endIndex2 = newCasesTmp.indexOf("rec") - 2;
                 String newCases = newCasesTmp.substring(startIndex2, endIndex2).replace("\"","");
-
-                if (newCases == "null") {
-                    System.out.println("null");
-                } else {
-                    System.out.println(newCases);
-                }
+                ApiSportsData.setAllNewCases(newCases);
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("There was a problem with getting the second api data. Error message: " + e.getMessage());
         } catch (JSONException e) {
             System.out.println("JSON Exception ----- " + e.getMessage());
         }
-    }
 
-    //getting todays data
-    @PostConstruct
-    public void getSecondApiDataDaily() {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://covid-193.p.rapidapi.com/statistics"))
-                .header("X-RapidAPI-Key", "e748cb7a27msh958efd3def7152bp12f14bjsn8a68de5bdcc1")
-                .header("X-RapidAPI-Host", "covid-193.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-
-
+        //getting todays data
         try {
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             String toBeRaplaced = response.body().substring(0, response.body().indexOf(":[{") + 1);
             String responseStr = response.body().replace(toBeRaplaced, "");
             JSONArray responseArray = new JSONArray(responseStr);
 
+
             for (int i = 0; i < responseArray.length(); i++) {
                 JSONObject obj = responseArray.getJSONObject(i);
                 //getting country name
-//                System.out.println(obj.getString("country"));
+                ApiSportsData.(obj.getString("country"));
                 //getting total cases
                 String allCasesTmp = obj.getString("cases");
                 int startIndex = allCasesTmp.indexOf("total") + 7;
@@ -155,5 +151,7 @@ public class CoronaDataService {
         } catch (JSONException e) {
             System.out.println("JSON Exception ----- " + e.getMessage());
         }
+
+        return ApiSportsData;
     }
 }
