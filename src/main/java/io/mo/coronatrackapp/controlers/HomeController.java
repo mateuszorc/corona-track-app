@@ -28,4 +28,9 @@ public class HomeController {
         model.addAttribute("totalNewCases", totalNewCases);
         return "home";
     }
+
+    @GetMapping("/secondApi")
+    public String secondApi(Model model) {
+        return "secondApi";
+    }
 }
