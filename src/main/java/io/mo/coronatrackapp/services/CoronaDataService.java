@@ -72,7 +72,7 @@ public class CoronaDataService {
         //get today's overall data
         HttpRequest requestTotalStats = HttpRequest.newBuilder()
                 .uri(URI.create("https://covid-193.p.rapidapi.com/statistics?country=all"))
-                .header("X-RapidAPI-Key", "e748cb7a27msh958efd3def7152bp12f14bjsn8a68de5bdcc1")
+                .header("X-RapidAPI-Key", "your-rapid-api-key")
                 .header("X-RapidAPI-Host", "covid-193.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
@@ -80,7 +80,7 @@ public class CoronaDataService {
         //get today's data for every country
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://covid-193.p.rapidapi.com/statistics"))
-                .header("X-RapidAPI-Key", "e748cb7a27msh958efd3def7152bp12f14bjsn8a68de5bdcc1")
+                .header("X-RapidAPI-Key", "your-rapid-api-key")
                 .header("X-RapidAPI-Host", "covid-193.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
